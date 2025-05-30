@@ -1,0 +1,35 @@
+[33mcommit 7b83835387a700068efbec8f674a18e5a518cb6b[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: Gabriel Duran <gabrieldurans999@gmail.com>
+Date:   Wed May 28 10:08:01 2025 -0400
+
+    Creacion deapplicartion.properties
+
+[33mcommit 6816c58a5a2d0f015ac33a3fe3fc2014a3bd0bd7[m
+Author: Gabriel Duran <gabrieldurans999@gmail.com>
+Date:   Tue May 27 14:41:22 2025 -0400
+
+    Creacion de la carpeta Controller : primera version (Suejta a cambios )
+
+[33mcommit e10f2d677b76e53e71a10ebc7181c5f2b0c09679[m
+Author: Gabriel Duran <gabrieldurans999@gmail.com>
+Date:   Tue May 27 14:23:18 2025 -0400
+
+    Creacion de BoletaService
+
+[33mcommit 4047c7682a4ffc91c68b4262a4cbbdc48fb9f632[m
+Author: Gabriel Duran <gabrieldurans999@gmail.com>
+Date:   Tue May 27 12:10:35 2025 -0400
+
+    Correcion de la carpeta modelo (Correcion en las relaciones)
+
+[33mcommit 9b7c8a8171677b8b92a62370b5e78e7b6cd2f1b1[m
+Author: Gabriel Duran <gabrieldurans999@gmail.com>
+Date:   Mon May 26 20:16:28 2025 -0400
+
+    Creacio del repository de boleta
+
+[33mcommit e6643921adf9739765fc7dadc334baf95a9e1901[m
+Author: Gabriel Duran <gabrieldurans999@gmail.com>
+Date:   Mon May 26 20:08:22 2025 -0400
+
+    Primer commit : primera version del modelo
