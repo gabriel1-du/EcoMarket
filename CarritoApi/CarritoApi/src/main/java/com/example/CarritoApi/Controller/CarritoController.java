@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,6 +23,9 @@ public class CarritoController {
     private CarritoService carritoService; //INYECCION del REpo
 
 
+    //-------------
+    //Metodos GeT
+    //------------
 
     // Obtener un carrito por su ID 
     @GetMapping("/{id}")
@@ -59,6 +61,12 @@ public class CarritoController {
         }
     }
 
+
+
+    //------------
+    //Metodos Post
+    //---------------
+
      // Crear un nuevo carrito para un usuario 
     @PostMapping("/usuario/{usuarioId}")
     public ResponseEntity<?> crearCarrito(@PathVariable Integer usuarioId) {
@@ -85,6 +93,9 @@ public class CarritoController {
         }
     }
 
+    //------------
+    //Metodos Delete
+    //-------------
     // Eliminar un producto del carrito 
     @DeleteMapping("/{carritoId}/producto/{productoId}")
     public ResponseEntity<?> eliminarProducto(

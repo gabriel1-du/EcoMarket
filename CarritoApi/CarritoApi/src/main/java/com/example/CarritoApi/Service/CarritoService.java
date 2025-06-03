@@ -25,7 +25,9 @@ public class CarritoService {
     @Autowired
     private usuarioRepository usuarioRepository;
     
-
+    //-------
+    //METODOS GET
+    //--------
     // Obtener un carrito por ID
     public Carrito getById(Integer id) {
         Optional<Carrito> carrito = carritoRepository.findById(id);
@@ -37,24 +39,29 @@ public class CarritoService {
         return carritoRepository.findByUsuarioIdAndActivoTrue(usuarioId);
     }
 
+
+    //-------
+    //Metodos Post
+    //-------
+
     // Crear un carrito nuevo para un usuario (si no tiene uno activo)
     public Carrito crearCarrito(Integer usuarioId) {
-    Usuario usuario = usuarioRepository.findById(usuarioId).orElse(null);
-    if (usuario == null) return null;
+        Usuario usuario = usuarioRepository.findById(usuarioId).orElse(null);
+            if (usuario == null) return null;
 
-    // Revisa si ya tiene un carrito activo
-    Carrito existente = carritoRepository.findByUsuarioIdAndActivoTrue(usuarioId);
-    if (existente != null) {
-        return existente; // Retorna el carrito actual si ya existe uno activo
+            // Revisa si ya tiene un carrito activo
+            Carrito existente = carritoRepository.findByUsuarioIdAndActivoTrue(usuarioId);
+             if (existente != null) {
+                return existente; // Retorna el carrito actual si ya existe uno activo
+            }
+
+        // Si no existe, crea uno nuevo
+        Carrito nuevo = new Carrito();
+        nuevo.setUsuario(usuario);
+        nuevo.setTotal(BigDecimal.ZERO);
+        nuevo.setActivo(true);
+        return carritoRepository.save(nuevo);
     }
-
-    // Si no existe, crea uno nuevo
-    Carrito nuevo = new Carrito();
-    nuevo.setUsuario(usuario);
-    nuevo.setTotal(BigDecimal.ZERO);
-    nuevo.setActivo(true);
-    return carritoRepository.save(nuevo);
-}
 
     // Agregar un producto al carrito (nuevo ítem o sumar cantidad si ya existe)
     public Carrito agregarProducto(Integer carritoId, Integer productoId, int cantidad) {
@@ -79,6 +86,12 @@ public class CarritoService {
         return getById(carritoId);
     }
 
+
+    //------
+    //METODOS DELETE
+    //------
+
+
     // Eliminar un producto del carrito
     public Carrito eliminarProducto(Integer carritoId, Integer productoId) {
         Optional<ItemCarrito> item = itemCarritoRepository.findByCarritoIdAndProductoId(carritoId, productoId);
@@ -98,6 +111,12 @@ public class CarritoService {
         return getById(carritoId);
     }
 
+
+
+    //---------
+    //metodos PUT
+    //-----------
+
     // Actualizar la cantidad de un producto
     public Carrito actualizarCantidad(Integer carritoId, Integer productoId, int nuevaCantidad) {
         Optional<ItemCarrito> item = itemCarritoRepository.findByCarritoIdAndProductoId(carritoId, productoId);
@@ -110,6 +129,12 @@ public class CarritoService {
         }
         return null;
     }
+
+
+    //---------
+    //METODO APARTE
+    //----------
+
 
     // Método interno para recalcular el total del carrito (aquí usarías precio si lo tienes)
     private void recalcularTotal(Integer carritoId) {
