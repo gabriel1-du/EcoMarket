@@ -33,7 +33,7 @@ public class ReporteService {
    
 
     //Buscar REPORTE por Id
-    public Reporte getbyId(Integer reporteId  ){
+    public Reporte getById(Integer reporteId  ){
         Optional<Reporte> Reporte = reporteRepository.findById(reporteId); //Busca el id
         return Reporte.orElse(null);// Devuelve null en caso de que no encuentre o no haya 
     }
@@ -46,11 +46,9 @@ public class ReporteService {
 
 
     //Buscar Tipo reporte por id
-    public TipoReporte getByIdTipoReporte(Integer tipo_reporte_id) {
-        Optional<TipoReporte> resultado = tipoReporteRepository.findById(tipo_reporte_id);
-        return resultado.orElse(null);
+    public TipoReporte getByIdTipoReporte(Integer id) {
+        return tipoReporteRepository.findById(id).orElse(null);
     }
-
 
 
     //------------------
@@ -63,17 +61,16 @@ public class ReporteService {
     }
 
 
-    //Crear un nuevo tipo de reporte (El catologo)
     public TipoReporte crearTipoReporte(Reporte reporte, Integer usuarioId, String tipo_reporte) {
-        TipoReporte nuevo = new TipoReporte();
+    // Guardar primero el reporte
+    Reporte reporteGuardado = reporteRepository.save(reporte);
 
-        nuevo.setReporte(reporte); // Relación con reporte
-        nuevo.setUsuarioId(usuarioId); // ID del usuario
-        nuevo.setTipo_reporte(tipo_reporte); // El tipo o nombre
+    TipoReporte nuevo = new TipoReporte();
+    nuevo.setUsuarioId(usuarioId);
+    nuevo.setTipo_reporte(tipo_reporte);
 
-        // La fecha se autogenera si ya lo definiste como: = LocalDateTime.now()
-        return tipoReporteRepository.save(nuevo);
-    }
+    return tipoReporteRepository.save(nuevo);
+}
 
 
 }

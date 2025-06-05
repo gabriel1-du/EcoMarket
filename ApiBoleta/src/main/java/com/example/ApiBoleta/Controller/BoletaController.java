@@ -28,7 +28,7 @@ public class BoletaController {
     private BoletaService boletaService;
 
     //Para obtener todas las boletas
-    @GetMapping("/")
+    @GetMapping(value = {"", "/"})
     public ResponseEntity<List<Boleta>> getAll(){
         return ResponseEntity.ok(boletaService.getAll());
     }

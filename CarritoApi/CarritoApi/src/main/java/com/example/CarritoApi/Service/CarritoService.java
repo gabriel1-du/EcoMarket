@@ -28,6 +28,11 @@ public class CarritoService {
     //-------
     //METODOS GET
     //--------
+
+    public List<Carrito> getAll() {
+        return carritoRepository.findAll();
+    }
+
     // Obtener un carrito por ID
     public Carrito getById(Integer id) {
         Optional<Carrito> carrito = carritoRepository.findById(id);
@@ -145,7 +150,7 @@ public class CarritoService {
             // Lógica temporal: como no tienes precio en ItemCarrito, asumimos 0
             BigDecimal total = BigDecimal.ZERO;
             for (ItemCarrito item : items) {
-                BigDecimal precioUnitario = BigDecimal.valueOf(1000); // TODO: Obtener desde InventarioService
+                BigDecimal precioUnitario = BigDecimal.valueOf(1000); 
                 total = total.add(precioUnitario.multiply(BigDecimal.valueOf(item.getCantidad())));
             }
 

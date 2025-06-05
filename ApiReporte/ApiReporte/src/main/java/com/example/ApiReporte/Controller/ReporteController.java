@@ -33,7 +33,7 @@ public class ReporteController {
 
     // Obtener un tipo de reporte por ID (GET /api/reportes/tipo/{id})
     @GetMapping("/tipo/{id}")
-    public ResponseEntity<?> getDefinicionReporteById(@PathVariable Integer tipo_reporte_id) {
+    public ResponseEntity<?> getDefinicionReporteById(@PathVariable("id") Integer tipo_reporte_id) {
         TipoReporte tipo = reporteService.getByIdTipoReporte(tipo_reporte_id);
         if (tipo != null) {
             return ResponseEntity.ok(tipo);
@@ -52,8 +52,8 @@ public class ReporteController {
 
     // Obtener un REPORTE por ID
     @GetMapping("/{id}")
-    public ResponseEntity<?> getById(@PathVariable Integer reporteId) {
-        Reporte reporte = reporteService.getbyId(reporteId);
+    public ResponseEntity<?> getById(@PathVariable("id") Integer reporteId) {
+        Reporte reporte = reporteService.getById(reporteId);
         if (reporte != null) {
             return ResponseEntity.ok(reporte);
         } else {
@@ -74,8 +74,7 @@ public class ReporteController {
     //CREAR un nuevo TIPO REPORTE
     @PostMapping("/tipo")
     public ResponseEntity<?> crearTipoReporte(@RequestBody TipoReporte tipoReporte) {
-        TipoReporte nuevo = reporteService.crearTipoReporte(
-            tipoReporte.getReporte(),             
+        TipoReporte nuevo = reporteService.crearTipoReporte(           
             tipoReporte.getUsuarioId(),             
             tipoReporte.getTipo_reporte()            
         );

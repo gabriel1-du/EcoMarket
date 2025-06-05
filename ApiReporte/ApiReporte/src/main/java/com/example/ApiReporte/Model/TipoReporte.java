@@ -9,8 +9,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -28,10 +27,6 @@ public class TipoReporte {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "tipo_reporte_id")
     private Integer tipo_reporte_id;//Modificacion a corte a la base de datos
-
-    @ManyToOne
-    @JoinColumn(name = "reporte_id", nullable = false)
-    private Reporte reporte; //Cracion de la coneccion con la tabla reporte id
 
     //Id del usuario
     @Column(name = "usuario_id", nullable = false)
