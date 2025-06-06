@@ -8,4 +8,5 @@ import com.example.ApiReporte.Model.HistoricoReporte;
 @Repository
 public interface HistoricoReporteRepository extends JpaRepository<HistoricoReporte, Integer>{
 
+
 }
