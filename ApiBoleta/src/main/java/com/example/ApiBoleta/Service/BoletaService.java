@@ -6,6 +6,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.ApiBoleta.Config.BoletaMapper;
+import com.example.ApiBoleta.DTO.BoletaDTO;
 import com.example.ApiBoleta.DTO.BoletaRequestDTO;
 import com.example.ApiBoleta.DTO.BoletaResponseDTO;
 import com.example.ApiBoleta.Model.Boleta;
@@ -16,14 +18,12 @@ import com.example.ApiBoleta.Repository.PedidoRepository;
 import com.example.ApiBoleta.Repository.UsuarioRepository;
 
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 
 @Service
-@NoArgsConstructor
 @AllArgsConstructor
 public class BoletaService {
 
-        // Inyección del repositorio
+    // Inyección del repositorio
     @Autowired
     private BoletaRepository boletaRepository;
 
@@ -32,6 +32,10 @@ public class BoletaService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+
+    //Creacion del objeto para mapper
+    private final BoletaMapper mapper;
     // --------------------
     // MÉTODOS ENTIDAD BOLETA
     // --------------------
@@ -40,11 +44,6 @@ public class BoletaService {
         return boletaRepository.findAll();
     }
 
-    // Buscar boleta por ID
-    public Boleta getById(Integer boletaId) {
-        Optional<Boleta> boleta = boletaRepository.findById(boletaId);
-        return boleta.orElse(null);
-    }
 
     // Actualizar una boleta existente
     public Boleta update(Integer boletaId, Boleta boleta) {
@@ -66,8 +65,17 @@ public class BoletaService {
     }
 
     // =============================
-    // MÉTODOS CONVERSIÓN DTO
+    // MÉTODOS DTO
     // =============================
+
+    //Metodo para buscar por id DTO
+    public BoletaDTO getbyIDDTO(Integer boletaId){
+        Boleta boleta = boletaRepository.findById(boletaId)
+            .orElseThrow(()-> new RuntimeException("Boleta no encontrada"));
+
+            return mapper.boletaToBoletaDTO(boleta);
+    }
+
 
     // Crear boleta y devolver DTO
     public BoletaResponseDTO add(Boleta boleta) {

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.ApiBoleta.DTO.BoletaDTO;
 import com.example.ApiBoleta.DTO.BoletaRequestDTO;
 import com.example.ApiBoleta.DTO.BoletaResponseDTO;
 import com.example.ApiBoleta.Model.Boleta;
@@ -37,7 +38,7 @@ public class BoletaController {
     //Buscar por id de boleta
     @GetMapping("/{boletaId}")
        public ResponseEntity<?> getById(@PathVariable Integer boletaId) {
-        Boleta boleta = boletaService.getById(boletaId);
+        BoletaDTO boleta = boletaService.getbyIDDTO(boletaId);
         if (boleta != null) {
             return ResponseEntity.ok(boleta);
         } else {
@@ -76,8 +77,6 @@ public class BoletaController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Boleta no encontrada para eliminar");
         }
     }
-
-
 
 
 }
