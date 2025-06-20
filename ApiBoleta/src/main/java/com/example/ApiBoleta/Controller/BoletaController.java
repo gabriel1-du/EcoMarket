@@ -30,12 +30,12 @@ public class BoletaController {
 
     //Para obtener todas las boletas
     @GetMapping(value = {"", "/"})
-    public ResponseEntity<List<Boleta>> getAll(){
+    public ResponseEntity<List<BoletaDTO>> getAll(){
         return ResponseEntity.ok(boletaService.getAll());
     }
 
 
-    //Buscar por id de boleta
+    //Buscar por id de boleta get
     @GetMapping("/{boletaId}")
        public ResponseEntity<?> getById(@PathVariable Integer boletaId) {
         BoletaDTO boleta = boletaService.getbyIDDTO(boletaId);

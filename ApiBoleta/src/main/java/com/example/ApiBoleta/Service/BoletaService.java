@@ -2,6 +2,8 @@ package com.example.ApiBoleta.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,8 +24,9 @@ import lombok.AllArgsConstructor;
 @Service
 @AllArgsConstructor
 public class BoletaService {
-
+    //----------------------
     // Inyección del repositorio
+    //----------------------
     @Autowired
     private BoletaRepository boletaRepository;
 
@@ -33,57 +36,28 @@ public class BoletaService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-
     //Creacion del objeto para mapper
     private final BoletaMapper mapper;
-    // --------------------
-    // MÉTODOS ENTIDAD BOLETA
-    // --------------------
-    // Obtener todas las boletas
-    public List<Boleta> getAll() {
-        return boletaRepository.findAll();
+    
+    //----------------------
+    //CONVERSIONES DTO
+    //---------------------
+
+    //Convertir Boleta a DTO
+    private BoletaDTO toDTO(Boleta boleta){
+
+        return new BoletaDTO(
+            boleta.getBoletaId(),
+            boleta.getSubtotal(),
+            boleta.getImpuesto(),
+            boleta.getTotal(), 
+            boleta.getFechaEmision(), 
+            boleta.getPedido().getId(), // Solo el ID
+            boleta.getUsuario().getId()); // Solo el ID    
+
     }
 
-
-    // Actualizar una boleta existente
-    public Boleta update(Integer boletaId, Boleta boleta) {
-        if (boletaRepository.existsById(boletaId)) {
-            boleta.setBoletaId(boletaId); // Asegurar el ID
-            return boletaRepository.save(boleta);
-        }
-        return null;
-    }
-
-    // Eliminar una boleta
-    public Boleta delete(Integer boletaId) {
-        Optional<Boleta> boleta = boletaRepository.findById(boletaId);
-        if (boleta.isPresent()) {
-            boletaRepository.deleteById(boletaId);
-            return boleta.get();
-        }
-        return null;
-    }
-
-    // =============================
-    // MÉTODOS DTO
-    // =============================
-
-    //Metodo para buscar por id DTO
-    public BoletaDTO getbyIDDTO(Integer boletaId){
-        Boleta boleta = boletaRepository.findById(boletaId)
-            .orElseThrow(()-> new RuntimeException("Boleta no encontrada"));
-
-            return mapper.boletaToBoletaDTO(boleta);
-    }
-
-
-    // Crear boleta y devolver DTO
-    public BoletaResponseDTO add(Boleta boleta) {
-        Boleta nueva = boletaRepository.save(boleta);
-        return convertToDTO(nueva);
-    }
-
-    // Convertir entidad Boleta a BoletaResponseDTO
+    // Convertir entidad BOLETA a BoletaResponseDTO
     public BoletaResponseDTO convertToDTO(Boleta boleta) {
         BoletaResponseDTO dto = new BoletaResponseDTO();
         dto.setBoletaId(boleta.getBoletaId());
@@ -92,10 +66,11 @@ public class BoletaService {
         dto.setTotal(boleta.getTotal());
         dto.setFechaEmision(boleta.getFechaEmision());
 
+        //BOOLEAN para verificar existencia de un PEDIDO
         if (boleta.getPedido() != null) {
             dto.setPedidoId(boleta.getPedido().getId());
         }
-
+        //BOOLEAN para verificar existencia de un USUARIO
         if (boleta.getUsuario() != null) {
             dto.setUsuarioId(boleta.getUsuario().getId());
             dto.setNombreUsuario(boleta.getUsuario().getNombre());
@@ -106,6 +81,7 @@ public class BoletaService {
         return dto;
     }
 
+    //Metodo de CREACION objeto de RESPUESTA
     public BoletaResponseDTO addFromDto(BoletaRequestDTO req) {
         // 1) Carga Pedido
         Pedido pedido = pedidoRepository.findById(req.getPedidoId())
@@ -129,7 +105,52 @@ public class BoletaService {
         return convertToDTO(nueva);
     }
 
-    //Metodo para actualizar una boleta
+
+    // --------------------
+    // MÉTODOS ENTIDAD BOLETA
+    // --------------------
+
+    // Eliminar una boleta
+    public Boleta delete(Integer boletaId) {
+        Optional<Boleta> boleta = boletaRepository.findById(boletaId);
+        if (boleta.isPresent()) {
+            boletaRepository.deleteById(boletaId);
+            return boleta.get();
+        }
+        return null;
+    }
+
+    // =============================
+    // MÉTODOS DTO
+    // =============================
+
+    //Metodo para buscar por id DTO GET
+    public BoletaDTO getbyIDDTO(Integer boletaId){
+        Boleta boleta = boletaRepository.findById(boletaId)
+            .orElseThrow(()-> new RuntimeException("Boleta no encontrada"));
+
+            return mapper.boletaToBoletaDTO(boleta);
+    }
+
+
+    //Metodo para buscar todas las boletas por id GET
+    public List<BoletaDTO> getAll() {
+        return boletaRepository.findAll().stream()
+        .map(this::toDTO)
+        .collect(Collectors.toList());
+    }
+
+
+    // Crear boleta y devolver DTO POST
+    public BoletaResponseDTO add(Boleta boleta) {
+        Boleta nueva = boletaRepository.save(boleta);
+        return convertToDTO(nueva);
+    }
+
+  
+
+
+    //Metodo para actualizar una boleta PUT
     public Boleta update(Integer boletaId, BoletaRequestDTO dto) {
         Optional<Boleta> optionalBoleta = boletaRepository.findById(boletaId);
         if (optionalBoleta.isPresent()) {
@@ -139,19 +160,19 @@ public class BoletaService {
             boleta.setTotal(dto.getTotal());
             boleta.setFechaEmision(dto.getFechaEmision());
 
-        // Cargar entidades relacionadas por ID
-        Pedido pedido = pedidoRepository.findById(dto.getPedidoId()).orElse(null);
-        Usuario usuario = usuarioRepository.findById(dto.getUsuarioId()).orElse(null);
+            // Cargar entidades relacionadas por ID
+            Pedido pedido = pedidoRepository.findById(dto.getPedidoId()).orElse(null);
+            Usuario usuario = usuarioRepository.findById(dto.getUsuarioId()).orElse(null);
 
-        if (pedido == null || usuario == null) return null;
+            if (pedido == null || usuario == null) return null;
 
-        boleta.setPedido(pedido);
-        boleta.setUsuario(usuario);
+            boleta.setPedido(pedido);
+            boleta.setUsuario(usuario);
 
-        return boletaRepository.save(boleta);
+            return boletaRepository.save(boleta);
+        }
+        return null;
     }
-    return null;
-}
 
 
         
