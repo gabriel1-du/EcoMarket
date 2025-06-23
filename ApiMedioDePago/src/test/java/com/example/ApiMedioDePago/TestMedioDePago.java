@@ -11,7 +11,7 @@ import com.example.ApiMedioDePago.Model.MedioDePago;
 @SpringBootTest
 public class TestMedioDePago {
 
-      @Test
+    @Test
     void testCrearMedioDePago(){
 
         //Creacion de objeto

@@ -1,8 +1,9 @@
 package com.example.ApiBoleta.DTO;
 
 import java.time.LocalDateTime;
-
 import org.springframework.hateoas.RepresentationModel;
+
+
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
