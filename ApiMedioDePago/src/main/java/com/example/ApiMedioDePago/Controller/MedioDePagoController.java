@@ -3,6 +3,7 @@ package com.example.ApiMedioDePago.Controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,6 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.ApiMedioDePago.Model.MedioDePago;
 import com.example.ApiMedioDePago.Sevice.MedioDePagoService;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 
 @RestController
 @RequestMapping("/api/medio-pago") // Ruta base para esta API
@@ -71,5 +76,53 @@ public class MedioDePagoController {
     }
 
 
-    //
+    //----------------------
+    //METODOS HATEOAS
+    //----------------------
+    
+    //OBTENER POR ID
+    @GetMapping("/hateoas/{id}")
+    public ResponseEntity<?> getHATEOASById(@PathVariable Integer id) {
+        MedioDePago medio = medioDePagoService.getById(id);
+
+        //En caso de que no haya ningun objeto en la base de datos
+        if (medio != null) {
+            medio.add(linkTo(methodOn(MedioDePagoController.class).getHATEOASById(id)).withSelfRel());
+            medio.add(linkTo(methodOn(MedioDePagoController.class).getAllHATEOAS()).withRel("todos"));
+            medio.add(linkTo(methodOn(MedioDePagoController.class).delete(id)).withRel("eliminar"));
+
+            // API Gateway links
+            medio.add(Link.of("http://localhost:8888/api/proxy/medio-pago/" + id).withSelfRel());
+            medio.add(Link.of("http://localhost:8888/api/proxy/medio-pago/" + id).withRel("modificar").withType("PUT"));
+            medio.add(Link.of("http://localhost:8888/api/proxy/medio-pago/" + id).withRel("eliminar").withType("DELETE"));
+
+            return ResponseEntity.ok(medio);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Método de pago no encontrado");
+        }
+    }
+
+    //OBTENER TODOS LOS POR HATEOAS
+    @GetMapping("/hateoas")
+    public ResponseEntity<List<MedioDePago>> getAllHATEOAS() {
+        List<MedioDePago> lista = medioDePagoService.getAll();
+
+        for (MedioDePago medio : lista) {
+            Integer id = medio.getId_medio_de_pago();
+
+            medio.add(Link.of("http://localhost:8888/api/proxy/medio-pago/" + id).withSelfRel());
+            medio.add(Link.of("http://localhost:8888/api/proxy/medio-pago/" + id).withRel("modificar").withType("PUT"));
+            medio.add(Link.of("http://localhost:8888/api/proxy/medio-pago/" + id).withRel("eliminar").withType("DELETE"));
+        }
+
+        return ResponseEntity.ok(lista);
+    }
+
+
+
+
+
+
+
+
 }

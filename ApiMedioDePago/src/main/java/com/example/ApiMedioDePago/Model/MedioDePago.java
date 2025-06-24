@@ -1,5 +1,7 @@
 package com.example.ApiMedioDePago.Model;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,7 +17,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class MedioDePago {
+public class MedioDePago extends RepresentationModel<MedioDePago>{
 
     //-----
     //atributos
