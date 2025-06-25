@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.ApiMedioDePago.Model.MedioDePago;
 import com.example.ApiMedioDePago.Sevice.MedioDePagoService;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+    import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+    import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 
 @RestController
@@ -90,7 +90,6 @@ public class MedioDePagoController {
             medio.add(linkTo(methodOn(MedioDePagoController.class).getHATEOASById(id)).withSelfRel());
             medio.add(linkTo(methodOn(MedioDePagoController.class).getAllHATEOAS()).withRel("todos"));
             medio.add(linkTo(methodOn(MedioDePagoController.class).delete(id)).withRel("eliminar"));
-
             // API Gateway links
             medio.add(Link.of("http://localhost:8888/api/proxy/medio-pago/" + id).withSelfRel());
             medio.add(Link.of("http://localhost:8888/api/proxy/medio-pago/" + id).withRel("modificar").withType("PUT"));

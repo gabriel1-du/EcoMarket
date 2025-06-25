@@ -10,12 +10,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import org.springframework.hateoas.RepresentationModel;
+
 @Entity
 @Table(name = "definicionreporte")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class DefinicionReporte {
+public class DefinicionReporte extends RepresentationModel<HistoricoReporte> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

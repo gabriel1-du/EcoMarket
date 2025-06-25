@@ -3,6 +3,7 @@ package com.example.ApiReporte.Controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,12 +21,21 @@ import com.example.ApiReporte.Model.HistoricoReporte;
 import com.example.ApiReporte.Service.DefinicionReporteService;
 
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
+
+
 @RestController
 @RequestMapping("/api/reportes")
 public class DefinicionReporteController {
+
+    //Inyecciones
     
     @Autowired
     private DefinicionReporteService reporteService;
+
+
 
     //----
     //Metodos Get
@@ -132,6 +142,47 @@ public class DefinicionReporteController {
         }else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Histórico no encontrado para actualizar");
         }   
+    }
+
+
+
+    //-------------------
+    //METODOS HATEOAS
+    //_------------------ 
+    @GetMapping("/hateoas")
+    public ResponseEntity<List<HistoricoReporte>> getAllHateoas() {
+          List<HistoricoReporte> lista = reporteService.getAll();
+
+        for (HistoricoReporte hist : lista) {
+            Integer id = hist.getHistId();
+
+            hist.add(Link.of("http://localhost:8888/api/proxy/reportes/" + id).withSelfRel());
+            hist.add(Link.of("http://localhost:8888/api/proxy/reportes/" + id).withRel("modificar").withType("PUT"));
+            hist.add(Link.of("http://localhost:8888/api/proxy/reportes/" + id).withRel("eliminar").withType("DELETE"));
+        }
+
+        return ResponseEntity.ok(lista);
+    }
+
+    @GetMapping("/hateoas/{histId}")
+    public ResponseEntity<?> getReporteHATEOASById(@PathVariable Integer histId) {
+        HistoricoReporte hist = reporteService.getbyId(histId); // Asegúrate de que el método esté bien escrito (getById)
+
+        // En caso de que no haya ningún objeto en la base de datos
+        if (hist != null) {
+            hist.add(linkTo(methodOn(DefinicionReporteController.class).getReporteHATEOASById(histId)).withSelfRel());
+            hist.add(linkTo(methodOn(DefinicionReporteController.class).getAllHateoas()).withRel("todos"));
+            hist.add(linkTo(methodOn(DefinicionReporteController.class).eliminarHistoricoReporte(histId)).withRel("eliminar"));
+
+            // API Gateway links
+            hist.add(Link.of("http://localhost:8888/api/proxy/reporte/" + histId).withSelfRel());
+            hist.add(Link.of("http://localhost:8888/api/proxy/reporte/" + histId).withRel("modificar").withType("PUT"));
+            hist.add(Link.of("http://localhost:8888/api/proxy/reporte/" + histId).withRel("eliminar").withType("DELETE"));
+
+            return ResponseEntity.ok(hist);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Reporte no encontrado");
+        }
     }
 
 

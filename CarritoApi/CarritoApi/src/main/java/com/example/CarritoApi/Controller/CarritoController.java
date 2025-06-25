@@ -19,6 +19,9 @@ import com.example.CarritoApi.Model.Carrito;
 import com.example.CarritoApi.Model.ItemCarrito;
 import com.example.CarritoApi.Service.CarritoService;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 @RestController
 @RequestMapping("/api/carrito") 
 public class CarritoController {
@@ -156,6 +159,50 @@ public class CarritoController {
         return ResponseEntity.ok(actualizado);
     }
 
+
+
+
+    //------------
+    //METODOS HATEOAS
+    //-------------
+
+      //OBTENER POR ID
+    @GetMapping("/hateoas/{id}")
+    public ResponseEntity<?> getHATEOASById(@PathVariable Integer id) {
+          Carrito carrito = carritoService.getById(id);
+
+        //En caso de que no haya ningun objeto en la base de datos
+        if (carrito != null) {
+            carrito.add(linkTo(methodOn(CarritoController.class).getHATEOASById(id)).withSelfRel());
+            carrito.add(linkTo(methodOn(CarritoController.class).getAllHATEOAS()).withRel("todos"));
+            carrito.add(linkTo(methodOn(CarritoController.class).delete(id)).withRel("eliminar"));
+            // API Gateway links
+            carrito.add(Link.of("http://localhost:8888/api/proxy/medio-pago/" + id).withSelfRel());
+            carrito.add(Link.of("http://localhost:8888/api/proxy/medio-pago/" + id).withRel("modificar").withType("PUT"));
+            carrito.add(Link.of("http://localhost:8888/api/proxy/medio-pago/" + id).withRel("eliminar").withType("DELETE"));
+
+            return ResponseEntity.ok(medio);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Método de pago no encontrado");
+        }
+    }
+
+
+    //OBTENER TODOS LOS POR HATEOAS
+    @GetMapping("/hateoas")
+    public ResponseEntity<List<MedioDePago>> getAllHATEOAS() {
+        List<MedioDePago> lista = medioDePagoService.getAll();
+
+        for (MedioDePago medio : lista) {
+            Integer id = medio.getId_medio_de_pago();
+
+            medio.add(Link.of("http://localhost:8888/api/proxy/medio-pago/" + id).withSelfRel());
+            medio.add(Link.of("http://localhost:8888/api/proxy/medio-pago/" + id).withRel("modificar").withType("PUT"));
+            medio.add(Link.of("http://localhost:8888/api/proxy/medio-pago/" + id).withRel("eliminar").withType("DELETE"));
+        }
+
+        return ResponseEntity.ok(lista);
+    }
 
 
 }

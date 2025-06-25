@@ -2,6 +2,8 @@ package com.example.ApiReporte.Model;
 
 import java.time.LocalDateTime;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,7 +21,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class HistoricoReporte {
+public class HistoricoReporte extends RepresentationModel<HistoricoReporte> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
