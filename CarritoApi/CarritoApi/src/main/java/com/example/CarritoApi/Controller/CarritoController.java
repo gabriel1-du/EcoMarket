@@ -3,6 +3,7 @@ package com.example.CarritoApi.Controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -126,6 +127,18 @@ public class CarritoController {
         }
     }
 
+    //MetodoParaEliminar un carrito
+    @DeleteMapping("/eliminar/{carritoId}")
+    public ResponseEntity<?> eliminarCarrito(@PathVariable Integer carritoId) {
+        boolean eliminado = carritoService.eliminarCarrito(carritoId);
+        if (eliminado) {
+            return ResponseEntity.ok("Carrito eliminado exitosamente");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Carrito no encontrado");
+     }
+    }
+
+
     //------------
     //METODO PUT
     //-----------
@@ -175,30 +188,30 @@ public class CarritoController {
         if (carrito != null) {
             carrito.add(linkTo(methodOn(CarritoController.class).getHATEOASById(id)).withSelfRel());
             carrito.add(linkTo(methodOn(CarritoController.class).getAllHATEOAS()).withRel("todos"));
-            carrito.add(linkTo(methodOn(CarritoController.class).delete(id)).withRel("eliminar"));
+            carrito.add(linkTo(methodOn(CarritoController.class).eliminarCarrito(id)).withRel("eliminar"));
             // API Gateway links
-            carrito.add(Link.of("http://localhost:8888/api/proxy/medio-pago/" + id).withSelfRel());
-            carrito.add(Link.of("http://localhost:8888/api/proxy/medio-pago/" + id).withRel("modificar").withType("PUT"));
-            carrito.add(Link.of("http://localhost:8888/api/proxy/medio-pago/" + id).withRel("eliminar").withType("DELETE"));
+            carrito.add(Link.of("http://localhost:8888/api/proxy/carrito/" + id).withSelfRel());
+            carrito.add(Link.of("http://localhost:8888/api/proxy/carrito/" + id).withRel("modificar").withType("PUT"));
+            carrito.add(Link.of("http://localhost:8888/api/proxy/carrito/" + id).withRel("eliminar").withType("DELETE"));
 
-            return ResponseEntity.ok(medio);
+            return ResponseEntity.ok(carrito);
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Método de pago no encontrado");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Carrito no encontrado");
         }
     }
 
 
     //OBTENER TODOS LOS POR HATEOAS
     @GetMapping("/hateoas")
-    public ResponseEntity<List<MedioDePago>> getAllHATEOAS() {
-        List<MedioDePago> lista = medioDePagoService.getAll();
+    public ResponseEntity<List<Carrito>> getAllHATEOAS() {
+        List<Carrito> lista = carritoService.getAll();
 
-        for (MedioDePago medio : lista) {
-            Integer id = medio.getId_medio_de_pago();
+        for (Carrito carrito : lista) {
+            Integer id = carrito.getId();
 
-            medio.add(Link.of("http://localhost:8888/api/proxy/medio-pago/" + id).withSelfRel());
-            medio.add(Link.of("http://localhost:8888/api/proxy/medio-pago/" + id).withRel("modificar").withType("PUT"));
-            medio.add(Link.of("http://localhost:8888/api/proxy/medio-pago/" + id).withRel("eliminar").withType("DELETE"));
+            carrito.add(Link.of("http://localhost:8888/api/proxy/carrito/" + id).withSelfRel());
+            carrito.add(Link.of("http://localhost:8888/api/proxy/carrito/" + id).withRel("modificar").withType("PUT"));
+            carrito.add(Link.of("http://localhost:8888/api/proxy/carrito/" + id).withRel("eliminar").withType("DELETE"));
         }
 
         return ResponseEntity.ok(lista);

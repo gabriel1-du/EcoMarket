@@ -2,6 +2,8 @@ package com.ecomarket.ApiEnvio.Model;
 
 import java.time.LocalDateTime;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,7 +21,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Envio {
+public class Envio extends RepresentationModel<Envio>{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

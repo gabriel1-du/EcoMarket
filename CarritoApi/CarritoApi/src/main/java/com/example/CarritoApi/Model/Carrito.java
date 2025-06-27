@@ -3,6 +3,8 @@ package com.example.CarritoApi.Model;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.springframework.hateoas.RepresentationModel;
+
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
@@ -22,7 +24,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Carrito {
+public class Carrito extends RepresentationModel<Carrito> {
 
     @Id
     @Column(name = "carrito_id") 

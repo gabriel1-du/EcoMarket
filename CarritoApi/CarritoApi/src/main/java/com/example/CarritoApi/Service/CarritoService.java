@@ -116,6 +116,23 @@ public class CarritoService {
         return getById(carritoId);
     }
 
+    //Se usa un boleano para verificar si es que eciste el carrito
+    //METODO PARA ELIMINAR UN CARRITO
+    public boolean eliminarCarrito(Integer carritoId) {
+        Optional<Carrito> carrito = carritoRepository.findById(carritoId);
+        if (carrito.isPresent()) {
+            // Eliminacion los items relacionados, si los hay
+            List<ItemCarrito> items = itemCarritoRepository.findByCarritoId(carritoId);
+            itemCarritoRepository.deleteAll(items);
+            
+            //eliminamos el carrit
+            carritoRepository.deleteById(carritoId);
+            return true;
+        }
+        return false;
+    }
+
+
 
 
     //---------

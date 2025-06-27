@@ -22,5 +22,4 @@ public class Direccion {
     @Column(name = "direccion_id")
     private Integer id;
 
-
 }

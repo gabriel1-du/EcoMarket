@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.hateoas.Link;
 
 import com.ecomarket.ApiEnvio.Model.Envio;
 import com.ecomarket.ApiEnvio.Service.EnvioService;
+
 
 @RestController
 @RequestMapping("/api/envios")
@@ -55,6 +57,37 @@ public class EnvioController {
     public ResponseEntity<Void> eliminar(@PathVariable Integer id) {
         envioService.eliminar(id);
         return ResponseEntity.noContent().build();
+    }
+
+    //METODOS HATEOAS
+
+    //METODO HATEOAS para buscar por ID
+    @GetMapping("/hateoas/{id}")
+    public Envio obtenerHATEOAS(@PathVariable Integer id) {
+        Envio env = envioService.obtenerPorId(id);
+        
+        //link HATEOAS para API Gateway "A mano"
+        env.add(Link.of("http://localhost:8888/api/proxy/envios" + env.getId()).withSelfRel());
+        env.add(Link.of("http://localhost:8888/api/proxy/envios" + env.getId()).withRel("Modificar HATEOAS").withType("PUT"));
+        env.add(Link.of("http://localhost:8888/api/proxy/envios" + env.getId()).withRel("Eliminar HATEOAS").withType("DELETE"));
+
+        return env;
+    }
+
+    //METODO HATEOAS para listar todos los productos utilizando HATEOAS
+    @GetMapping("/hateoas")
+    public List<Envio> obtenerTodosHATEOAS() {
+        List<Envio> lista = envioService.listarTodos();
+
+        for (Envio env : lista) {
+            
+
+            //link HATEOAS para API Gateway "A mano"
+            env.add(Link.of("http://localhost:8888//api/proxy/envios").withRel("Get todos HATEOAS"));
+            env.add(Link.of("http://localhost:8888/api/proxy/envios" + env.getId()).withRel("Crear HATEOAS").withType("POST"));
+        }
+
+        return lista;
     }
 
 }

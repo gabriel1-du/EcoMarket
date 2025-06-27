@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -81,10 +82,26 @@ public class UsuarioController {
 
         UsuarioDTO usuDTO = usuServ.buscarUsuarioPorId(id); 
 
-        usuDTO.add(linkTo(methodOn(UsuarioController.class).getById(id)).withSelfRel());
-        usuDTO.add(linkTo(methodOn(UsuarioController.class).getAll()).withRel("todos"));
-        usuDTO.add(linkTo(methodOn(UsuarioController.class).eliminar(id)).withRel("eliminar"));
-
+         // API Gateway links
+            usuDTO.add(Link.of("http://localhost:8888/api/proxy/usuarios/" + id).withSelfRel());
+            usuDTO.add(Link.of("http://localhost:8888/api/proxy/usuarios/" + id).withRel("modificar").withType("PUT"));
+            usuDTO.add(Link.of("http://localhost:8888/api/proxy/usuarios/" + id).withRel("eliminar").withType("DELETE"));
         return usuDTO;
+    }
+
+
+     @GetMapping("/hateoas")
+    public ResponseEntity<List<UsuarioDTO>> getAllHATEOAS() {
+        List<UsuarioDTO> lista = usuServ.listarUsuarios();
+
+        for (UsuarioDTO usu : lista) {
+            Integer id = usu.getIdUsuario();
+
+            usu.add(Link.of("http://localhost:8888/api/proxy/usuarios/" + id).withSelfRel());
+            usu.add(Link.of("http://localhost:8888/api/proxy/usuarios/" + id).withRel("modificar").withType("PUT"));
+            usu.add(Link.of("http://localhost:8888/api/proxy/usuarios/" + id).withRel("eliminar").withType("DELETE"));
+        }
+
+        return ResponseEntity.ok(lista);
     }
 }
