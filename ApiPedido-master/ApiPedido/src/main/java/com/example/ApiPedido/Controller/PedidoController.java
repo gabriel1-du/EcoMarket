@@ -94,14 +94,31 @@ public class PedidoController {
             pedido.add(linkTo(methodOn(PedidoController.class).getAll()).withRel("todos"));
             pedido.add(linkTo(methodOn(PedidoController.class).delete(id)).withRel("eliminar"));
             // API Gateway links
-            pedido.add(Link.of("http://localhost:8888/api/proxy/medio-pago/" + id).withSelfRel());
-            pedido.add(Link.of("http://localhost:8888/api/proxy/medio-pago/" + id).withRel("modificar").withType("PUT"));
-            pedido.add(Link.of("http://localhost:8888/api/proxy/medio-pago/" + id).withRel("eliminar").withType("DELETE"));
+            pedido.add(Link.of("http://localhost:8888/api/proxy/envios/" + id).withSelfRel());
+            pedido.add(Link.of("http://localhost:8888/api/proxy/envios/" + id).withRel("modificar").withType("PUT"));
+            pedido.add(Link.of("http://localhost:8888/api/proxy/envios/" + id).withRel("eliminar").withType("DELETE"));
 
             return ResponseEntity.ok(pedido);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Método de pago no encontrado");
         }
+    }
+
+
+    //OBTENER TODOS LOS POR HATEOAS
+    @GetMapping("/hateoas")
+    public ResponseEntity<List<Pedido>> getAllHATEOAS() {
+        List<Pedido> lista = pedidoService.getAll();
+
+        for (Pedido pedido : lista) {
+            Integer id = pedido.getId();
+
+            pedido.add(Link.of("http://localhost:8888/api/proxy/envios/" + id).withSelfRel());
+            pedido.add(Link.of("http://localhost:8888/api/proxy/envios/" + id).withRel("modificar").withType("PUT"));
+            pedido.add(Link.of("http://localhost:8888/api/proxy/envios/" + id).withRel("eliminar").withType("DELETE"));
+        }
+
+        return ResponseEntity.ok(lista);
     }
 
 }
