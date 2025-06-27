@@ -3,6 +3,7 @@ package com.example.ApiPedido.Controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -17,6 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.ApiPedido.Model.Pedido;
 import com.example.ApiPedido.Service.PedidoService;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 
 @Controller
 @RestController
@@ -73,5 +78,30 @@ public class PedidoController {
         }
     }
 
+
+    //-------
+    //METODOS HATEOAS
+    //--------
+
+    //OBTENER POR ID
+    @GetMapping("/hateoas/{id}")
+    public ResponseEntity<?> getHATEOASById(@PathVariable Integer id) {
+        Pedido pedido = pedidoService.getById(id);
+
+        //En caso de que no haya ningun objeto en la base de datos
+        if (pedido != null) {
+            pedido.add(linkTo(methodOn(PedidoController.class).getHATEOASById(id)).withSelfRel());
+            pedido.add(linkTo(methodOn(PedidoController.class).getAll()).withRel("todos"));
+            pedido.add(linkTo(methodOn(PedidoController.class).delete(id)).withRel("eliminar"));
+            // API Gateway links
+            pedido.add(Link.of("http://localhost:8888/api/proxy/medio-pago/" + id).withSelfRel());
+            pedido.add(Link.of("http://localhost:8888/api/proxy/medio-pago/" + id).withRel("modificar").withType("PUT"));
+            pedido.add(Link.of("http://localhost:8888/api/proxy/medio-pago/" + id).withRel("eliminar").withType("DELETE"));
+
+            return ResponseEntity.ok(pedido);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Método de pago no encontrado");
+        }
+    }
 
 }

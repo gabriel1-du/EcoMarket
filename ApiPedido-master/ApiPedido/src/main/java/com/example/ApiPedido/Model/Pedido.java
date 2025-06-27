@@ -3,6 +3,7 @@ package com.example.ApiPedido.Model;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.hateoas.RepresentationModel;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -24,7 +25,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 //Falta  Table
-public class Pedido {
+public class Pedido extends RepresentationModel<Pedido> {
     
     //Atributos
     @Id
